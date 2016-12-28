@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Photo editor -->
+    <item
+        android:id="@+id/menu_open_photo_editor"
+        android:title="@string/menu_open_photo_editor"
+        android:icon="@drawable/img_pen"
+        app:showAsAction="ifRoom"/>
+
+    <!-- Search Widget -->
+    <!--<item-->
+        <!--android:id="@+id/menu_search"-->
+        <!--android:title="@string/menu_search"-->
+        <!--app:actionViewClass="android.support.v7.widget.SearchView"-->
+        <!--app:showAsAction="ifRoom"-->
+        <!--app:srcCompat="@drawable/ic_search"/>-->
+
+    <!-- Next -->
+    <!--<item-->
+        <!--android:id="@+id/menu_next"-->
+        <!--android:title="@string/menu_next"-->
+        <!--app:showAsAction="ifRoom"/>-->
+
+    <!-- Group -->
+    <!--<group android:id="@+id/menu_group">-->
+        <!--<item android:id="@+id/menu_settings"-->
+              <!--android:title="@string/menu_settings" />-->
+        <!--<item android:id="@+id/menu_help_and_feedback"-->
+              <!--android:title="@string/menu_help_and_feedback" />-->
+    <!--</group>-->
+</menu>

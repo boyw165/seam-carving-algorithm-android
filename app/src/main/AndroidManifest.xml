@@ -22,9 +22,10 @@
 
         <!-- Fabric Crashlytics -->
 
+
         <!-- Splash Screen -->
         <activity
-            android:name="com.my.seams_carv.SplashScreenActivity"
+            android:name=".SplashScreenActivity"
             android:theme="@style/AppTheme.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -34,23 +35,18 @@
         </activity>
 
         <!-- Start Page -->
-        <activity
-            android:name=".StartActivity">
+        <activity android:name=".StartActivity">
         </activity>
 
         <!-- Other pages -->
+        <activity
+            android:name=".PhotoEditorActivity"
+            android:theme="@style/AppTheme.TranslucentBlackBg">
+        </activity>
 
-        <!-- Sample Shadow Activity (for e.g. RxPermissions) -->
-        <!--<activity-->
-        <!--android:name=".util.PermissionActivity"-->
-        <!--android:launchMode="singleTop"-->
-        <!--android:theme="@style/InvisibleTheme">-->
-        <!--</activity>-->
+        <!-- Services ////////////////////////////////////////////////////// -->
 
-        <!-- Services //////////////////////////////////////////////////////-->
-
-        <!-- ContentProviders //////////////////////////////////////////////-->
-
+        <!-- ContentProviders ////////////////////////////////////////////// -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="@string/file_provider_authority"
@@ -62,4 +58,5 @@
             </meta-data>
         </provider>
     </application>
+
 </manifest>

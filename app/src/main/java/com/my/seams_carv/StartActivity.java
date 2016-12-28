@@ -33,12 +33,13 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.my.seams_carv.util.ViewUtil;
-import com.my.seams_carv.view.INavMenu;
 import com.my.seams_carv.view.IProgressBarView;
 import com.my.seams_carv.view.ImagePreviewerDialogFragment;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -99,10 +100,22 @@ public class StartActivity
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+
+        inflater.inflate(R.menu.start_menu, menu);
+
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return true;
+            case R.id.menu_open_photo_editor:
+                openPhotoEditor(null);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -168,7 +181,8 @@ public class StartActivity
                 .create(new ObservableOnSubscribe<Void>() {
                     @Override
                     public void subscribe(ObservableEmitter<Void> e) throws Exception {
-                        showPhoto(uri);
+//                        showPhoto(uri);
+                        openPhotoEditor(uri);
                     }
                 })
                 .subscribeOn(AndroidSchedulers.mainThread());
@@ -283,5 +297,10 @@ public class StartActivity
         ImagePreviewerDialogFragment
             .newInstance(uri)
             .show(getSupportFragmentManager(), "dialog");
+    }
+
+    private void openPhotoEditor(Uri uri) {
+        startActivity(new Intent(StartActivity.this,
+                                 PhotoEditorActivity.class));
     }
 }

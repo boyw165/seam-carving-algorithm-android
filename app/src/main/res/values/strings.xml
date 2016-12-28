@@ -11,6 +11,7 @@
 
     <!-- menu item captions -->
     <string name="menu_toggle_drawer">Menu</string>
+    <string name="menu_open_photo_editor" tools:ignore="MissingTranslation">Open Photo Editor</string>
     <string name="menu_search" tools:ignore="MissingTranslation">Search</string>
     <string name="menu_next" tools:ignore="MissingTranslation">Next</string>
     <string name="menu_settings" tools:ignore="MissingTranslation">Settings</string>
