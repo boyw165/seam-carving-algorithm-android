@@ -194,7 +194,10 @@ public class StartActivity
                           Snackbar.LENGTH_SHORT)
                     .show();
         }
-        // TODO: Add the photo to the system MediaContent.
+
+        // Add the photo to the system MediaContent.
+        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+                          .setData(uri));
     }
 
     private void grantPermAndDispatchTakePhotoIntent() {
@@ -302,6 +305,7 @@ public class StartActivity
 
     private void openPhotoEditor(Uri uri) {
         startActivity(new Intent(StartActivity.this,
-                                 PhotoEditorActivity.class));
+                                 PhotoEditorActivity.class)
+                          .setData(uri));
     }
 }
