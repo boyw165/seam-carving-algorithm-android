@@ -32,15 +32,18 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.my.seams_carv.util.CvUtil;
 import com.my.seams_carv.util.ImageUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -66,9 +69,9 @@ public class PhotoView extends ImageView {
     public void onDrawForeground(Canvas canvas) {
         super.onDrawForeground(canvas);
 
-        canvas.drawLine(getLeft(), getTop(),
-                        getRight(), getBottom(),
-                        mBoundPaint);
+//        canvas.drawLine(getLeft(), getTop(),
+//                        getRight(), getBottom(),
+//                        mBoundPaint);
     }
 
     @Override
@@ -80,15 +83,58 @@ public class PhotoView extends ImageView {
                 @Override
                 public void subscribe(ObservableEmitter<Bitmap> e)
                     throws Exception {
-                    e.onNext(resolveBitmap(uri));
+                    e.onNext(sampleBitmap(uri));
                     e.onComplete();
                 }
             })
-            .subscribeOn(Schedulers.io())
+            .subscribeOn(Schedulers.computation())
+            .debounce(200, TimeUnit.MILLISECONDS)
+            .observeOn(Schedulers.computation())
+            .map(new Function<Bitmap, Bitmap>() {
+                @Override
+                public Bitmap apply(Bitmap bitmap) throws Exception {
+                    Log.d("xyz", "bmp width=" + bitmap.getWidth() + ", height=" + bitmap.getHeight());
+                    // FIXME: We enlarge the size by 1.5 times in the horizontal
+                    // FIXME: direction temporarily.
+                    int finalWidth = (int) (2.f * bitmap.getWidth());
+                    int finalHeight = bitmap.getHeight();
+                    boolean which = true;
+                    int[][] tmp0 = new int[finalWidth][finalHeight];
+                    int[][] tmp1 = new int[finalWidth][finalHeight];
+                    int[][] energyMap = new int[finalWidth][finalHeight];
+
+                    CvUtil.toColors(bitmap, tmp0);
+
+                    for (int i = 0; i < finalWidth - bitmap.getWidth(); ++i) {
+                        Log.d("xyz", "seam#" + i);
+                        int validWidth = bitmap.getWidth() + i;
+                        int validHeight = bitmap.getHeight();
+
+                        if (which) {
+                            CvUtil.calcEnergyMap(tmp0, energyMap, validWidth, validHeight);
+                            CvUtil.addSeam(tmp0,
+                                           tmp1,
+                                           CvUtil.findVerticalSeam(energyMap, validWidth));
+                        } else {
+                            CvUtil.calcEnergyMap(tmp1, energyMap, validWidth, validHeight);
+                            CvUtil.addSeam(tmp1,
+                                           tmp0,
+                                           CvUtil.findVerticalSeam(energyMap, validWidth));
+                        }
+
+                        which = !which;
+                    }
+
+                    // Convert int[][] to a bitmap.
+                    return which ? CvUtil.toBitmap(tmp0): CvUtil.toBitmap(tmp1);
+                }
+            })
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new DisposableObserver<Bitmap>() {
                 @Override
                 public void onNext(Bitmap bitmap) {
+                    Log.d("xyz", "Display the bitmap.");
+                    // Display the bitmap.
                     setImageBitmap(bitmap);
                 }
 
@@ -107,7 +153,7 @@ public class PhotoView extends ImageView {
     ///////////////////////////////////////////////////////////////////////////
     // Protected / Private Methods ////////////////////////////////////////////
 
-    private Bitmap resolveBitmap(final Uri uri) {
+    private Bitmap sampleBitmap(final Uri uri) {
         InputStream stream = null;
 
         try {
@@ -124,7 +170,7 @@ public class PhotoView extends ImageView {
             // Determine the sampling factor.
             final BitmapFactory.Options opt = new BitmapFactory.Options();
             opt.inSampleSize = viewMinDimen < imgMaxDimen ?
-                1 << (imgMaxDimen / viewMinDimen) :
+                1 << (2 * imgMaxDimen / viewMinDimen) :
                 1;
             // FIXME: Called like 4 times.
             Log.w(TAG, "inSampleSize=" + opt.inSampleSize);

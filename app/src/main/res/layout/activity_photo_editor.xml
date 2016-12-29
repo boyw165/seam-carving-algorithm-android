@@ -51,6 +51,6 @@
         android:background="@drawable/bg_circle_white"
         android:elevation="10dp"
         android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerInside"
+        android:scaleType="fitCenter"
         app:srcCompat="@drawable/img_debug"/>
 </FrameLayout>
